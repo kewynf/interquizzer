@@ -9,6 +9,13 @@ class ExamStep extends Model
 {
     use HasFactory;
 
+    public $fillable = [
+        'exam_id',
+        'title',
+        'description',
+        'icon',
+    ];
+
     public function exam()
     {
         return $this->belongsTo(Exam::class);
