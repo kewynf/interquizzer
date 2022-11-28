@@ -13,18 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('exams', function (Blueprint $table) {
+        Schema::create('collections', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('candidate_id')->constrained()->onDelete('cascade');
 
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('icon')->nullable();
-
-            $table->string('discord_voice_channel_id')->nullable();
-            $table->string('discord_text_channel_id')->nullable();
 
             $table->timestamps();
         });
@@ -37,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('exams');
+        Schema::dropIfExists('collections');
     }
 };
