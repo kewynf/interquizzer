@@ -12,6 +12,61 @@ use Illuminate\Http\Request;
 
 class ExamController extends Controller
 {
+
+    public function renderExam(int $exam_id)
+    {
+        $exam = Exam::findOrFail($exam_id);
+
+        if ($exam->user->id !== auth()->user()->id) {
+            abort(403);
+        }
+
+        return view('exam.exam', [
+            'exam' => $exam,
+        ]);
+    }
+
+    public function start(int $exam_id)
+    {
+        $exam = Exam::findOrFail($exam_id);
+
+        if ($exam->user->id !== auth()->user()->id) {
+            abort(403);
+        }
+
+        if (is_null($exam->started_at)) {
+            $exam->started_at = now();
+            $exam->save();
+        }
+
+
+        return redirect()->route('exam.during', ['exam' => $exam->id, 'step' => $exam->steps->first()->id]);
+    }
+
+    public function during(int $exam_id, int $step_id)
+    {
+        $exam = Exam::findOrFail($exam_id);
+
+        if ($exam->user->id !== auth()->user()->id) {
+            abort(403);
+        }
+
+        $step = ExamStep::findOrFail($step_id);
+
+        if ($step->exam->id !== $exam->id) {
+            abort(403);
+        }
+
+        return view('exam.during', [
+            'exam' => $exam,
+            'currentStep' => $step,
+        ]);
+    }
+
+    public function end(int $exam_id)
+    {
+    }
+
     public function generate(ExamTemplate $template, User $user, Candidate $candidate, string $discord_voice_channel_id, string $discord_text_channel_id)
     {
         $exam = [

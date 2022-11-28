@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,18 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+
+    Route::controller(ExamController::class)
+        ->name('exam.')
+        ->prefix('exam')
+        ->group(function () {
+            Route::get('/{exam}', 'renderExam')->name('render');
+            Route::get('/{exam}/start', 'start')->name('start');
+            Route::get('/{exam}/end', 'end')->name('end');
+            Route::get('/{exam}/during/{step}', 'during')->name('during');
+        });
+
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
