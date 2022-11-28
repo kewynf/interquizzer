@@ -9,6 +9,18 @@ class Exam extends Model
 {
     use HasFactory;
 
+    public $fillable = [
+        'user_id',
+        'candidate_id',
+        'title',
+        'description',
+        'icon',
+        'discord_voice_channel_id',
+        'discord_text_channel_id',
+        'started_at',
+        'ended_at',
+    ];
+
     public function steps()
     {
         return $this->hasMany(ExamStep::class);
