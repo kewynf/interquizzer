@@ -8,12 +8,12 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             <div class="h-full flex flex-col gap-4 text-gray-800 dark:text-gray-200">
-
                 <div class="flex flex-col">
                     <span>Exam #{{ $exam->id }}</span>
                     <span>Candidate: {{ $exam->candidate->name }}</span>
                     <span>Examiner: {{ $exam->user->name }}</span>
                 </div>
+
 
                 <div class="flex flex-col gap-4">
                     <span class="mb-4">Steps:</span>
@@ -72,21 +72,21 @@
                                             </span>
                                         @endif
 
+                                        <div>
+                                            <span>Comment:</span>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ $ability->comment }}
+                                            </p>
+                                        </div>
+
                                     </div>
-                                    <div>
-                                        <span>Comment:</span>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ $ability->comment }}
-                                        </p>
-                                    </div>
+                                @endforeach
                             </div>
+                        </div>
                     @endforeach
                 </div>
-            </div>
-            @endforeach
-        </div>
 
-    </div>
-    </div>
+            </div>
+        </div>
     </div>
 
 
