@@ -26,6 +26,19 @@ class ExamController extends Controller
         ]);
     }
 
+    public function createDiscordChannel(int $exam_id)
+    {
+        $exam = Exam::findOrFail($exam_id);
+
+        if ($exam->user->id !== auth()->user()->id) {
+            abort(403);
+        }
+
+        DiscordController::createExamChannels($exam);
+
+        return redirect()->back();
+    }
+
     public function start(int $exam_id)
     {
         $exam = Exam::findOrFail($exam_id);

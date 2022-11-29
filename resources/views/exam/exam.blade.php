@@ -20,7 +20,15 @@
                         <p class="text-gray-500 dark:text-gray-400">{{ $exam->candidate->name }}</p>
                     </div>
 
+
                     <div>
+                        @if (!$exam->discord_voice_channel_id)
+                            <a href="{{ route('exam.discord.create', $exam->id) }}">
+                                CRIAR CANAIS DISCORD
+                            </a>
+                        @else
+                            <span>CANAIS DISCORD CRIADOS</span>
+                        @endif
                         <a href="{{ route('exam.start', $exam->id) }}">
                             INICIAR
                         </a>

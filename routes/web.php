@@ -30,6 +30,7 @@ Route::middleware('auth')->group(function () {
         ->prefix('exam')
         ->group(function () {
             Route::get('/{exam}', 'renderExam')->name('render');
+            Route::get('/{exam}/discord/create', 'createDiscordChannel')->name('discord.create');
             Route::get('/{exam}/start', 'start')->name('start');
             Route::get('/{exam}/end', 'end')->name('end');
             Route::get('/{exam}/during/{step}', 'during')->name('during');
