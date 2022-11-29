@@ -63,8 +63,80 @@ class ExamController extends Controller
         ]);
     }
 
+    public function previousStep(int $exam_id, int $step_id)
+    {
+        $exam = Exam::findOrFail($exam_id);
+
+        if ($exam->user->id !== auth()->user()->id) {
+            abort(403);
+        }
+
+        $currentStep = ExamStep::findOrFail($step_id);
+
+        if ($currentStep->exam->id !== $exam->id) {
+            abort(403);
+        }
+
+        $flag = false;
+
+        foreach ($exam->steps->sortByDesc('id') as $step) {
+            if ($flag) {
+                return redirect()->route('exam.during', ['exam' => $exam->id, 'step' => $step->id]);
+            }
+
+            if ($step->id === $currentStep->id) {
+                $flag = true;
+            }
+        }
+
+        return redirect()->route('exam.during', ['exam' => $exam->id, 'step' => $currentStep->id]);
+    }
+
+    public function nextStep(int $exam_id, int $step_id)
+    {
+        $exam = Exam::findOrFail($exam_id);
+
+        if ($exam->user->id !== auth()->user()->id) {
+            abort(403);
+        }
+
+        $currentStep = ExamStep::findOrFail($step_id);
+
+        if ($currentStep->exam->id !== $exam->id) {
+            abort(403);
+        }
+
+        $flag = false;
+
+        foreach ($exam->steps as $step) {
+            if ($flag) {
+                return redirect()->route('exam.during', ['exam' => $exam->id, 'step' => $step->id]);
+            }
+
+            if ($step->id === $currentStep->id) {
+                $flag = true;
+            }
+        }
+
+        return redirect()->route('exam.during', ['exam' => $exam->id, 'step' => $currentStep->id]);
+    }
+
     public function end(int $exam_id)
     {
+        $exam = Exam::findOrFail($exam_id);
+
+        if ($exam->user->id !== auth()->user()->id) {
+            abort(403);
+        }
+
+        if (is_null($exam->ended_at)) {
+            $exam->ended_at = now();
+            $exam->save();
+        }
+
+        return view('exam.end', [
+            'exam' => $exam,
+        ]);
     }
 
     public function generate(ExamTemplate $template, User $user, Candidate $candidate, string $discord_voice_channel_id, string $discord_text_channel_id)

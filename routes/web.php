@@ -33,6 +33,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/{exam}/start', 'start')->name('start');
             Route::get('/{exam}/end', 'end')->name('end');
             Route::get('/{exam}/during/{step}', 'during')->name('during');
+            Route::get('/{exam}/during/{step}/next', 'nextStep')->name('nextStep');
+            Route::get('/{exam}/during/{step}/previous', 'previousStep')->name('previousStep');
         });
 
 
