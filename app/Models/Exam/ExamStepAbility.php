@@ -29,4 +29,9 @@ class ExamStepAbility extends Model
         'grade',
         'comment'
     ];
+
+    public function step()
+    {
+        return $this->belongsTo(ExamStep::class, 'exam_step_id');
+    }
 }

@@ -33,7 +33,7 @@
 
     <div>
         @if (!$ability->discord_message_id)
-            <button class="bg-green-600 text-white">
+            <button wire:click="sendDiscordMessage" class="bg-green-600 text-white">
                 SEND CONTENT
             </button>
         @else

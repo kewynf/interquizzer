@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Exam;
 
+use App\Http\Controllers\DiscordController;
 use App\Models\Exam\ExamStepAbility as ExamExamStepAbility;
 use Livewire\Component;
 
@@ -37,6 +38,7 @@ class ExamStepAbility extends Component
 
     public function sendDiscordMessage()
     {
+        DiscordController::sendContentToExamChannel($this->ability);
     }
 
     public function startTimer()

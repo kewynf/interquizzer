@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Exam\Exam;
+use App\Models\Exam\ExamStepAbility;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -61,29 +62,83 @@ class DiscordController extends Controller
         return null;
     }
 
-
-
-    /**
-     * Sends a Message to a Discord Text channel
-     * 
-     * @param string $message
-     * @param string $channel_id
-     * 
-     * @return string $message_id
-     */
-    public static function sendMessage(string $channel_id, array $message)
+    public static function sendContentToExamChannel(ExamStepAbility $ability)
     {
+        switch ($ability->content_type) {
+            case 'text':
+                $content = self::buildAbilityTextMessage($ability);
+                break;
+            case 'image':
+                $content = self::buildAbilityImageMessage($ability);
+                break;
+            default:
+                abort(500, 'Unknown content type');
+                break;
+        }
+
+        $message =  self::postToApi("/channels/" . $ability->step->exam->discord_text_channel_id . "/messages", $content);
+
+        $ability->discord_message_id = $message['id'];
+        $ability->save();
+    }
+
+    public static function buildAbilityTextMessage(ExamStepAbility $ability)
+    {
+        $message = [
+            "embed" => [
+                'title' => $ability->title,
+                'description' => $ability->description,
+                'timestamp' => now()->format("Y-m-d\TH:i:s"),
+                'fields' => [
+                    [
+                        'name' => $ability->content_title,
+                        'value' => '`' . $ability->content_description . '`',
+                    ]
+                ],
+                'footer' => [
+                    'text' => 'Powered by REPORTIK',
+                ],
+            ],
+        ];
+
+        return $message;
+    }
+
+    public static function buildAbilityImageMessage(ExamStepAbility $ability)
+    {
+        $message = [
+            "embed" => [
+                'title' => $ability->title,
+                'description' => $ability->description,
+                'timestamp' => now()->format("Y-m-d\TH:i:s"),
+                'fields' => [
+                    [
+                        'name' => $ability->content_title,
+                        'value' =>  $ability->content_description . " \n (Click on the image to expand)",
+                    ]
+                ],
+                "image" => [
+                    "url" => $ability->content_path,
+                ],
+                'footer' => [
+                    'text' => 'Powered by REPORTIK',
+                ],
+            ],
+        ];
+
+        return $message;
     }
 
     public static function createExamChannels(Exam $exam, bool $refresh = false)
     {
-        if ($refresh) {
-            self::deleteExamChannels($exam);
-            $exam->refresh();
-        }
+
 
         if ($exam->discord_voice_channel_id !== null && $exam->discord_text_channel_id !== null) {
-            return;
+            if ($refresh) {
+                self::deleteExamChannels($exam);
+                $exam->refresh();
+            } else
+                return;
         }
 
         $everyone_role_id = self::getRoleIdFromGuild(env('DISCORD_GUILD_ID'), '@everyone');
@@ -146,6 +201,13 @@ class DiscordController extends Controller
             'deny' => 0,
         ];
 
+        $overwrites[] = [
+            'id' => $exam->user->discord_id,
+            'type' => 1,
+            'allow' => 3072,
+            'deny' => 0,
+        ];
+
         return $overwrites;
     }
 
@@ -159,6 +221,13 @@ class DiscordController extends Controller
             'type' => 0,
             'allow' => 0,
             'deny' => 1049600,
+        ];
+
+        $overwrites[] = [
+            'id' => $exam->user->discord_id,
+            'type' => 1,
+            'allow' => 66061568,
+            'deny' => 0,
         ];
 
         $overwrites[] = [
