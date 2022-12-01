@@ -16,10 +16,25 @@
                     </div>
 
                     <div>
-                        <span class="text-2xl font-bold dark:text-gray-200">Candidate</span>
-                        <p class="text-gray-500 dark:text-gray-400">{{ $exam->candidate->name }}</p>
+                        <span class="text-2xl font-bold dark:text-gray-200">Candidates:</span>
+                        @foreach ($exam->candidates as $candidate)
+                            <p class="text-gray-500 dark:text-gray-400">{{ $candidate->name }}</p>
+                        @endforeach
                     </div>
 
+                    <div>
+                        <span class="text-2xl font-bold dark:text-gray-200">Examiners:</span>
+                        @foreach ($exam->examiners as $examiner)
+                            <p class="text-gray-500 dark:text-gray-400">{{ $examiner->name }}</p>
+                        @endforeach
+                    </div>
+
+                    <div>
+                        <span class="text-2xl font-bold dark:text-gray-200">Invigilators:</span>
+                        @foreach ($exam->invigilators as $invigilator)
+                            <p class="text-gray-500 dark:text-gray-400">{{ $invigilator->name }}</p>
+                        @endforeach
+                    </div>
 
                     <div>
                         @if (!$exam->discord_voice_channel_id)
