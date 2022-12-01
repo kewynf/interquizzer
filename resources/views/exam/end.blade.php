@@ -10,8 +10,21 @@
             <div class="h-full flex flex-col gap-4 text-gray-800 dark:text-gray-200">
                 <div class="flex flex-col">
                     <span>Exam #{{ $exam->id }}</span>
-                    <span>Candidate: {{ $exam->candidate->name }}</span>
-                    <span>Examiner: {{ $exam->user->name }}</span>
+                    <span>Candidate(s): </span>
+                    @foreach ($exam->candidates as $candidate)
+                        <span>{{ $candidate->name }}</span>
+                    @endforeach
+                    <br>
+                    <span>Examiner(s): </span>
+                    @foreach ($exam->examiners as $examiner)
+                        <span>{{ $examiner->name }}</span>
+                    @endforeach
+                    <br>
+                    <span>Invigilator(s): </span>
+                    @foreach ($exam->invigilators as $invigilator)
+                        <span>{{ $invigilator->name }}</span>
+                    @endforeach
+                    <br>
                 </div>
 
 
