@@ -22,18 +22,34 @@ class Exam extends Model
         'ended_at',
     ];
 
+    protected $appends = [
+        'examiners',
+        'invigilators',
+        'candidates',
+    ];
+
     public function steps()
     {
         return $this->hasMany(ExamStep::class);
     }
 
-    public function candidate()
+    public function users()
     {
-        return $this->belongsTo(Candidate::class);
+        return $this->belongsToMany(User::class, 'exam_user')->withPivot('role');
     }
 
-    public function user()
+    public function getExaminersAttribute()
     {
-        return $this->belongsTo(User::class);
+        return $this->users()->wherePivot('role', 'examiner')->get();
+    }
+
+    public function getInvigilatorsAttribute()
+    {
+        return $this->users()->wherePivot('role', 'invigilator')->get();
+    }
+
+    public function getCandidatesAttribute()
+    {
+        return $this->users()->wherePivot('role', 'candidate')->get();
     }
 }
