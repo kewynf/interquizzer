@@ -25,4 +25,11 @@ class ExamStep extends Model
     {
         return $this->hasMany(ExamStepAbility::class);
     }
+
+    public function getCompletedAttribute()
+    {
+        return $this->abilities->every(function ($ability) {
+            return $ability->grade !== null;
+        });
+    }
 }
