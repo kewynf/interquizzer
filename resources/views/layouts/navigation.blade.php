@@ -16,8 +16,8 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('exam.render', 1)" :active="request()->routeIs('exam.render', 1)">
-                        {{ __('Exame') }}
+                    <x-nav-link :href="route('exam.create')" :active="request()->routeIs('exam.create')">
+                        {{ __('Iniciar Exame') }}
                     </x-nav-link>
                 </div>
             </div>

@@ -33,6 +33,11 @@ class Exam extends Model
         return $this->hasMany(ExamStep::class);
     }
 
+    public function abilities()
+    {
+        return $this->hasManyThrough(ExamStepAbility::class, ExamStep::class);
+    }
+
     public function users()
     {
         return $this->belongsToMany(User::class, 'exam_user')->withPivot('role');

@@ -1,10 +1,12 @@
-<div class="text-xl text-center flex flex-col gap-1 text-gray-800 dark:text-gray-100">
-    <span>{{ $ability->title }}</span>
-    <span class="text-sm text-gray-500 dark:text-gray-400">{{ $ability->description }}</span>
+<div class="px-8 py-4 flex flex-col gap-2 w-full bg-white text-gray-900 dark:bg-gray-800 dark:text-white">
 
-    @if ($ability->content_type)
-        <div class="flex flex-col gap-2">
-            <span>Conteúdo: {{ $ability->content_type }}</span>
+    <span class="font-bold text-xl">{{ $ability->title }}</span>
+    <span> {{ $ability->description }}</span>
+
+    <div class="flex gap-8">
+        <!--- CONTENT -->
+        <div class="flex flex-col grow gap-2">
+            <span>Content: {{ __('contentType.' . $ability->content_type) }}</span>
 
             @switch($ability->content_type)
                 @case('text')
@@ -12,7 +14,9 @@
                 @break
 
                 @case('image')
-                    <img src="{{ $ability->content_path }}" alt="">
+                    <div class="w-full h-96 bg-contain bg-no-repeat bg-start"
+                        style="background-image: url('{{ $ability->content_path }}')">
+                    </div>
                 @break
 
                 @case('video')
@@ -29,49 +33,50 @@
             @endswitch
 
         </div>
-    @endif
 
-    <div>
-        @if (!$ability->discord_message_id)
-            <button wire:click="sendDiscordMessage" class="bg-green-600 text-white">
-                SEND CONTENT
-            </button>
-        @else
-            <button disabled class="bg-slate-500 text-white"> MESSAGE SENT </button>
-        @endif
+        <!--- CONTROLS -->
+        <div class="flex flex-col gap-4 justify-center">
+            @if (!$ability->discord_message_id)
+                <button wire:click="sendDiscordMessage" class="bg-green-600 text-white px-4 py-2 rounded">
+                    SEND CONTENT
+                </button>
+            @else
+                <button disabled class="bg-slate-500 text-white px-4 py-2 rounded"> MESSAGE SENT
+                </button>
+            @endif
 
 
-        @if (!$ability->answer_start_at)
-            <button wire:click="startTimer" class="bg-green-500 text-white">
-                START TIMER
-            </button>
-        @elseif(!$ability->answer_end_at)
-            <button wire:click="stopTimer" class="bg-red-500 text-white">
-                END TIMER
-            </button>
-        @else
-            <button disabled="disabled" class="bg-gray-500 text-white">
-                {{ $ability->answer_end_at->diffForHumans($ability->answer_start_at) }}
-            </button>
-            <button wire:click="resetTimer" class="bg-red-500 text-white">
-                RESET TIMER
-            </button>
-        @endif
+            @if (!$ability->answer_start_at)
+                <button wire:click="startTimer" class="bg-green-500 text-white px-4 py-2 rounded">
+                    START TIMER
+                </button>
+            @elseif(!$ability->answer_end_at)
+                <button wire:click="stopTimer" class="bg-red-500 text-white px-4 py-2 rounded">
+                    END TIMER
+                </button>
+            @else
+                <button disabled="disabled" class="bg-gray-500 text-white">
+                    {{ $ability->answer_end_at->diffForHumans($ability->answer_start_at) }}
+                </button>
+                <button wire:click="resetTimer" class="bg-red-500 text-white px-4 py-2 rounded">
+                    RESET TIMER
+                </button>
+            @endif
 
+            <div class="flex gap-2 items-center">
+                <label for="">Grade:</label>
+                <input wire:model="grade" wire:blur.debounce.200ms="saveGrade" type="number" min='0'
+                    max='10' class="text-slate-900 w-full">
+            </div>
+
+            <div>
+                <label for="">Observation</label>
+                <textarea wire:model.defer="comment" wire:blur.debounce.200ms="saveComment" name="" id=""
+                    class="w-full h-full text-slate-900"></textarea>
+            </div>
+
+            <span class="font-mono text-sm mt-8">Last Update: {{ $ability->updated_at }}</span>
+
+        </div>
     </div>
-
-    <div>
-        <label for="">Grade</label>
-        <input wire:model="grade" wire:blur.debounce.200ms="saveGrade" type="number" min='0' max='10'
-            class="text-slate-900">
-    </div>
-
-    <div>
-        <label for="">Observation</label>
-        <textarea wire:model.defer="comment" wire:blur.debounce.200ms="saveComment" name="" id=""
-            class="w-full h-1/2 text-slate-900"></textarea>
-    </div>
-    Atualização:
-
-    {{ $ability->updated_at }}
 </div>

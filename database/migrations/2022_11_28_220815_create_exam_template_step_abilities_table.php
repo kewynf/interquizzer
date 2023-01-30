@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
 
-            $table->foreignId('collection_id')->constrained()->onDelete('restrict');
+            $table->foreignId('collection_id')->nullable()->constrained()->onDelete('restrict');
 
             $table->timestamps();
         });

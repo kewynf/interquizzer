@@ -6,6 +6,7 @@ use App\Models\Exam\Exam;
 use App\Models\Exam\ExamStepAbility;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class DiscordController extends Controller
 {
@@ -25,6 +26,7 @@ class DiscordController extends Controller
     }
     public static function postToApi(string $uri, array $content = [])
     {
+        Log::debug($content);
         $response = Http::withToken(
             env('DISCORD_BOT_TOKEN'),
             'Bot'
@@ -33,6 +35,9 @@ class DiscordController extends Controller
             $content
         );
 
+
+        Log::debug($response->status());
+        Log::debug($response->json());
         return $response->json();
     }
 

@@ -5,100 +5,56 @@
         </h2>
     </x-slot>
 
+
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="h-full flex flex-col gap-4 text-gray-800 dark:text-gray-200">
-                <div class="flex flex-col">
-                    <span>Exam #{{ $exam->id }}</span>
-                    <span>Candidate(s): </span>
-                    @foreach ($exam->candidates as $candidate)
-                        <span>{{ $candidate->name }}</span>
-                    @endforeach
-                    <br>
-                    <span>Examiner(s): </span>
-                    @foreach ($exam->examiners as $examiner)
-                        <span>{{ $examiner->name }}</span>
-                    @endforeach
-                    <br>
-                    <span>Invigilator(s): </span>
-                    @foreach ($exam->invigilators as $invigilator)
-                        <span>{{ $invigilator->name }}</span>
-                    @endforeach
-                    <br>
-                </div>
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6 text-gray-800 dark:text-gray-200">
+
+            <pre class="bg-gray-800 text-white px-4 py-2 w-full break">
+Exam #{{ $exam->id }} - {{ $exam->title }}
+Started at: {{ $exam->started_at }} - Ended at: {{ $exam->ended_at }}
+Candidates: @foreach ($exam->candidates as $candidate)
+{{ $candidate->name }} @if (!$loop->first)
+,
+@endif
+@endforeach
+
+Examiners: @foreach ($exam->examiners as $examiner)
+{{ $examiner->name }} @if (!$loop->first)
+,
+@endif
+@endforeach
+
+Invigilators: @foreach ($exam->invigilators as $invigilator)
+{{ $invigilator->name }} @if (!$loop->first)
+,
+@endif
+@endforeach
 
 
-                <div class="flex flex-col gap-4">
-                    <span class="mb-4">Steps:</span>
+Steps: 
+--------------------
+@foreach ($exam->steps as $step)
+- {{ $step->title }}
+  {{ $step->description }}
+Abilities:
+@foreach ($step->abilities as $ability)
+- {{ $ability->title }}
+    {{ $ability->description }}
+    Grade: {{ $ability->grade }} / 10
+    Observations: {{ $ability->observations }}
+    Content Provided: {{ __('contentType.' . $ability->content_type) }} ({{ $ability->content_title }})
+                      {{ $ability->content_description }}
+                      Path to Content: <a target="_blank" href="{{ $ability->content_path }}" class="underline">CLICK HERE</a>
+@endforeach
+--------------------
+@endforeach
 
-                    @foreach ($exam->steps as $step)
-                        <div class="flex flex-col gap-2">
-                            <span>Step: {{ $step->title }}</span>
-                            <span class="text-sm text-gray-500 dark:text-gray-400">{{ $step->description }}</span>
+AVERAGE GRADE: {{ round($exam->abilities->avg('grade'), 1) }} / 10
 
-                            <div class="flex flex-col gap-4">
-                                @foreach ($step->abilities as $ability)
-                                    <div class="flex flex-col gap-1">
-                                        <span>Ability: {{ $ability->title }}</span>
-                                        <span
-                                            class="text-sm text-gray-500 dark:text-gray-400">{{ $ability->description }}</span>
-                                        <span class="text-sm text-gray-500 dark:text-gray-400">Grade:
-                                            {{ $ability->grade }} / 10</span>
+THANKS FOR USING REPORTIK!
+</pre>
 
-                                        <div class="flex flex-col gap-1">
-                                            <span>Content Provided: {{ $ability->content_type }}
-                                                ({{ $ability->content_title }})
-                                            </span>
-                                            <div>
-                                                @switch($ability->content_type)
-                                                    @case('text')
-                                                        <span
-                                                            class="w-full px-2 py-2 bg-slate-800 text-white rounded-md">{{ $ability->content_description }}</span>
-                                                    @break
 
-                                                    @case('image')
-                                                        <span>{{ $ability->content_description }}</span>
-                                                        <img src="{{ $ability->content_path }}" alt="">
-                                                    @break
-
-                                                    @case('video')
-                                                        <span>{{ $ability->content_description }}</span>
-                                                        <video src="{{ $ability->content_path }}" controls></video>
-                                                    @break
-
-                                                    @case('audio')
-                                                        <span>{{ $ability->content_description }}</span>
-                                                        <audio src="{{ $ability->content_path }}" controls></audio>
-                                                    @break
-
-                                                    @case('file')
-                                                        <span>{{ $ability->content_description }}</span>
-                                                        <a href="{{ $ability->content_path }}" target="_blank">Download</a>
-                                                    @break
-                                                @endswitch
-                                            </div>
-                                        </div>
-                                        @if ($ability->answer_start_at && $ability->answer_end_at)
-                                            <span class="text-sm text-gray-500 dark:text-gray-400">Answered in
-                                                {{ $ability->answer_end_at->diffInSeconds($ability->answer_start_at) }}
-                                                seconds
-                                            </span>
-                                        @endif
-
-                                        <div>
-                                            <span>Comment:</span>
-                                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ $ability->comment }}
-                                            </p>
-                                        </div>
-
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-
-            </div>
         </div>
     </div>
 

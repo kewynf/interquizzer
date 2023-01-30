@@ -9,10 +9,22 @@ use App\Models\Exam\ExamStepAbility;
 use App\Models\ExamTemplate\ExamTemplate;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 
 class ExamController extends Controller
 {
+
+    public function create()
+    {
+        $exam_templates = ExamTemplate::orderBy('title')->get();
+        $candidates = User::orderBy('name')->get();
+
+        return view('exam.create', [
+            'exam_templates' => $exam_templates,
+            'candidates' => $candidates,
+        ]);
+    }
 
     public function renderExam(int $exam_id)
     {
@@ -139,63 +151,81 @@ class ExamController extends Controller
         ]);
     }
 
-    public function generate(ExamTemplate $template, User $user, Candidate $candidate, string $discord_voice_channel_id, string $discord_text_channel_id)
+    public function generate(Request $request)
     {
-        $exam = [
-            'user_id' => $user->id,
-            'candidate_id' => $candidate->id,
+        $request->validate([
+            'exam_template_id' => 'required|exists:exam_templates,id',
+            'candidate_id' => 'required|exists:users,id',
+        ]);
 
-            'title' => $template->title,
-            'description' => $template->description,
-            'icon' => $template->icon,
+        $exam_template = ExamTemplate::findOrFail($request->input('exam_template_id'));
+        $candidate = User::findOrFail($request->input('candidate_id'));
 
-            'discord_voice_channel_id' => $discord_voice_channel_id,
-            'discord_text_channel_id' => $discord_text_channel_id,
-        ];
+        $exam = Exam::create([
+            'title' => $exam_template->title,
+            'description' => $exam_template->description,
+            'icon' => $exam_template->icon,
+        ]);
 
-        $exam = Exam::create($exam);
+        $exam->users()->attach([$candidate->id => ['role' => 'candidate']]);
+        $exam->users()->attach([$request->user()->id => ['role' => 'examiner']]);
 
-        foreach ($template->steps as $step) {
-            $examStep = [
+        foreach ($exam_template->steps as $step) {
+            $exam_step = ExamStep::create([
                 'exam_id' => $exam->id,
-
                 'title' => $step->title,
                 'description' => $step->description,
                 'icon' => $step->icon,
-            ];
-
-            $examStep = ExamStep::create($examStep);
+            ]);
 
             foreach ($step->abilities as $ability) {
-                if ($ability->collection_id) {
+
+
+                $newAbility = ExamStepAbility::create([
+                    'exam_step_id' => $exam_step->id,
+                    'title' => $ability->title,
+                    'description' => $ability->description,
+                ]);
+
+                if ($ability->collection) {
                     $content = $ability->collection->contents->random();
 
-                    $examStepAbility = [
-                        'exam_step_id' => $examStep->id,
+                    $newAbility->content_title = $content->title;
+                    $newAbility->content_description = $content->description;
+                    $newAbility->content_type = $content->type;
+                    $newAbility->content_path = $content->path;
 
-                        'title' => $ability->title,
-                        'description' => $ability->description,
-
-                        'content_title' => $content->title,
-                        'content_description' => $content->description,
-                        'content_type' => $content->type,
-                        'content_path' => $content->path,
-                    ];
-                } else
-                    $examStepAbility = [
-                        'exam_step_id' => $examStep->id,
-
-                        'title' => $ability->title,
-                        'description' => $ability->description,
-                    ];
-
-                $examStepAbility = ExamStepAbility::create($examStepAbility);
+                    $newAbility->save();
+                }
             }
         }
 
-        $exam->refresh();
-        return $exam;
+        return redirect()->route('exam.render', ['exam' => $exam->id]);
     }
+
+    public function addObserver(Request $request)
+    {
+
+
+
+        $exam_id = $request->input('exam_id');
+        $user_id = $request->input('user_id');
+
+        $exam = Exam::findOrFail($exam_id);
+
+        Gate::authorize("exam.examiner", $exam);
+
+        $user = User::findOrFail($user_id);
+
+        if ($exam->observers->contains($user)) {
+            redirect()->back();
+        }
+
+        $exam->observers()->attach($user);
+
+        return redirect()->back();
+    }
+
 
     public static function createExamDiscordChannels(Exam $exam, bool $refresh = false)
     {

@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,7 +31,10 @@ Route::middleware('auth')->group(function () {
         ->name('exam.')
         ->prefix('exam')
         ->group(function () {
+            Route::get('/', 'create')->name('create');
+            Route::post('/', 'generate')->name('generate');
             Route::get('/{exam}', 'renderExam')->name('render');
+            Route::post('/{exam}/observer', 'addObserver')->name('addObserver');
             Route::get('/{exam}/discord/create', 'createDiscordChannel')->name('discord.create');
             Route::get('/{exam}/start', 'start')->name('start');
             Route::get('/{exam}/end', 'end')->name('end');
