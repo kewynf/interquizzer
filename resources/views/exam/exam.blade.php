@@ -32,15 +32,17 @@
                         @endforeach
                     </div>
 
-                    <div>
+                    <div class="flex justify-center gap-8">
                         @if (!$exam->discord_voice_channel_id)
-                            <a href="{{ route('exam.discord.create', $exam->id) }}">
+                            <a class="bg-green-500 text-white rounded px-4 py-2"
+                                href="{{ route('exam.discord.create', $exam->id) }}">
                                 CRIAR CANAIS DISCORD
                             </a>
                         @else
-                            <span>CANAIS DISCORD CRIADOS</span>
+                            <span class="bg-gray-500 text-white rounded px-4 py-2">CANAIS DISCORD CRIADOS</span>
                         @endif
-                        <a href="{{ route('exam.start', $exam->id) }}">
+                        <a class="bg-green-500 text-white rounded px-4 py-2"
+                            href="{{ route('exam.start', $exam->id) }}">
                             INICIAR
                         </a>
                     </div>
