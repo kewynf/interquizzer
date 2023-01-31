@@ -55,11 +55,12 @@ THANKS FOR USING REPORTIK!
 </pre>
 
 
+            <a href="{{ route('exam.discord.delete', $exam->id) }}" class="px-4 py-2 text-white bg-red-500">DELETE
+                DISCORD
+                CHANNELS</a>
         </div>
     </div>
 
-    <a href="{{ route('exam.discord.delete', $exam->id) }}" class="px-4 py-2 text-white bg-red-500">DELETE DISCORD
-        CHANNELS</a>
 
 
 </x-app-layout>
