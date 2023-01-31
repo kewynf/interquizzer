@@ -1,6 +1,6 @@
 @props(['current'])
 
-<div class="w-full flex gap-4 snap-x overflow-x-hidden bg-white px-3 scroll-pl-12 ">
+<div class="w-full flex gap-4 snap-x overflow-x-auto bg-white px-3 scroll-pl-12 ">
     @foreach ($exam->steps as $step)
         <div class="flex flex-col snap-start mt-6 @if ($step->id == $current)  @endif">
             <span class="text-lg text-gray-700">{{ $step->title }}</span>

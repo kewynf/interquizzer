@@ -10,6 +10,8 @@
 
             @switch($ability->content_type)
                 @case('text')
+                    <span
+                        class="w-full px-2 py-2 bg-slate-800 text-white rounded-md text-lg">{{ $ability->content_title }}</span>
                     <span class="w-full px-2 py-2 bg-slate-800 text-white rounded-md">{{ $ability->content_description }}</span>
                 @break
 
