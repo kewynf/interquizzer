@@ -58,5 +58,8 @@ THANKS FOR USING REPORTIK!
         </div>
     </div>
 
+    <a href="{{ route('exam.discord.delete', $exam->id) }}" class="px-4 py-2 text-white bg-red-500">DELETE DISCORD
+        CHANNELS</a>
+
 
 </x-app-layout>

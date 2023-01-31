@@ -274,6 +274,17 @@ class ExamController extends Controller
         $exam->save();
     }
 
+    public static function deleteDiscordChannel(int $exam_id)
+    {
+        $exam = Exam::findOrFail($exam_id);
+
+        Gate::authorize("exam.examiner", $exam);
+
+        ExamController::deleteExamDiscordChannels($exam);
+
+        return redirect()->back();
+    }
+
     public static function sendContentToExamDiscordChannel(ExamStepAbility $ability)
     {
         switch ($ability->content_type) {

@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/{exam}', 'renderExam')->name('render');
             Route::post('/{exam}/observer', 'addObserver')->name('addObserver');
             Route::get('/{exam}/discord/create', 'createDiscordChannel')->name('discord.create');
+            Route::get('/{exam}/discord/delete', 'deleteDiscordChannel')->name('discord.delete');
             Route::get('/{exam}/start', 'start')->name('start');
             Route::get('/{exam}/end', 'end')->name('end');
             Route::get('/{exam}/during/{step}', 'during')->name('during');
