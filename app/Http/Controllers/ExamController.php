@@ -188,7 +188,12 @@ class ExamController extends Controller
                 ]);
 
                 if ($ability->collection) {
+
                     $content = $ability->collection->contents->random();
+
+                    while ($exam->abilities->contains('content_title', $content->title)) {
+                        $content = $ability->collection->contents->random();
+                    }
 
                     $newAbility->content_title = $content->title;
                     $newAbility->content_description = $content->description;
