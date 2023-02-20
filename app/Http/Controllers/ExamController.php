@@ -161,13 +161,13 @@ class ExamController extends Controller
         $candidate = User::where('discord_id', $request->input('candidate_id'))->first();
 
         if (!$candidate) {
-            $discordUser = DiscordController::getGuildMembers(env('DISCORD_GUILD_ID'));
+            $discordUsers = DiscordController::getGuildMembers(env('DISCORD_GUILD_ID'));
 
             $user = [];
 
-            foreach ($discordUser as $user) {
-                if ($user['user']['id'] == $request->input('candidate_id')) {
-                    $user = $user;
+            foreach ($discordUsers as $discordUser) {
+                if ($discordUser['user']['id'] == $request->input('candidate_id')) {
+                    $user = $discordUser;
                 }
             }
 
