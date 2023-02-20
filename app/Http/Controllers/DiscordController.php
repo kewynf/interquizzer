@@ -69,7 +69,9 @@ class DiscordController extends Controller
 
     public static function getGuildMembers(string $guild_id)
     {
-        return DiscordController::getFromApi("/guilds/$guild_id/members");
+        return DiscordController::getFromApi("/guilds/$guild_id/members", [
+            'limit' => 1000
+        ]);
     }
 
 

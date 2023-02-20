@@ -28,10 +28,6 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
 
-    Route::get('/test', function () {
-        return DiscordController::getGuildMembers('1047168666732605492');
-    });
-
     Route::controller(ExamController::class)
         ->name('exam.')
         ->prefix('exam')
