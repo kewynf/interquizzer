@@ -18,7 +18,7 @@ class ExamController extends Controller
     public function create()
     {
         $exam_templates = ExamTemplate::orderBy('title')->get();
-        $candidates = User::orderBy('name')->get();
+        $candidates = DiscordController::getGuildMembers(env('DISCORD_GUILD_ID'));
 
         return view('exam.create', [
             'exam_templates' => $exam_templates,
@@ -155,11 +155,35 @@ class ExamController extends Controller
     {
         $request->validate([
             'exam_template_id' => 'required|exists:exam_templates,id',
-            'candidate_id' => 'required|exists:users,id',
+            'candidate_id' => 'required',
         ]);
 
+        $candidate = User::where('discord_id', $request->input('candidate_id'))->first();
+
+        if (!$candidate) {
+            $discordUser = DiscordController::getGuildMembers(env('DISCORD_GUILD_ID'));
+
+            $user = [];
+
+            foreach ($discordUser as $user) {
+                if ($user['user']['id'] == $request->input('candidate_id')) {
+                    $user = $user;
+                }
+            }
+
+            if (!$user) {
+                abort(404);
+            }
+
+            $candidate = User::create([
+                'name' => $user['nick'] ?? $user['user']['username'],
+                'email' => $user['user']['id'] . '@discord.com',
+                'password' => 0,
+                'discord_id' => $user['user']['id'],
+            ]);
+        }
+
         $exam_template = ExamTemplate::findOrFail($request->input('exam_template_id'));
-        $candidate = User::findOrFail($request->input('candidate_id'));
 
         $exam = Exam::create([
             'title' => $exam_template->title,

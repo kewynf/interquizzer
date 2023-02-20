@@ -67,6 +67,12 @@ class DiscordController extends Controller
         return null;
     }
 
+    public static function getGuildMembers(string $guild_id)
+    {
+        return DiscordController::getFromApi("/guilds/$guild_id/members");
+    }
+
+
     public static function deleteChannel(string $channel_id)
     {
         return DiscordController::deleteFromApi('/channels/' . $channel_id);

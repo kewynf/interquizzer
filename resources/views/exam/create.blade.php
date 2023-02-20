@@ -31,7 +31,8 @@
                     <select name="candidate_id" id="candidate_id" class="grow dark:bg-gray-800 ">
                         <option value="">Selecione o Candidato</option>
                         @foreach ($candidates as $candidate)
-                            <option value="{{ $candidate->id }}">{{ $candidate->name }}</option>
+                            <option value="{{ $candidate['user']['id'] }}">
+                                {{ $candidate['nick'] ?? $candidate['user']['username'] }}</option>
                         @endforeach
                     </select>
 

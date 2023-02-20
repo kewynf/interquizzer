@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DiscordController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Role;
@@ -26,6 +27,10 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+
+    Route::get('/test', function () {
+        return DiscordController::getGuildMembers('1047168666732605492');
+    });
 
     Route::controller(ExamController::class)
         ->name('exam.')
